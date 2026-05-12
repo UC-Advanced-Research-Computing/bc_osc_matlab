@@ -42,6 +42,7 @@
 batch_connect:
   template: "vnc"
 script:
+  qos: <%= auto_accounts %>
   queue_name: "<%= custom_queue %>"
   native:
     - "--nodes"
