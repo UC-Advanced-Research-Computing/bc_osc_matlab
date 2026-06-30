@@ -1,7 +1,17 @@
 #!/usr/bin/env bash
 
-# Clean the environment
-module purge
+<%-
+  form_modules = context.version
+%>
+
+# Load the required environment
+setup_env () {
+  module purge
+  module load <%= form_modules %>
+  module load cuda/12.6.3
+}
+
+setup_env
 
 # Set working directory to home directory
 cd "${HOME}"
@@ -15,7 +25,6 @@ export XDG_DATA_HOME="<%= session.staged_root.join("share") %>"
 export XDG_CACHE_HOME="$(mktemp -d)"
 export $(dbus-launch)
 
-module restore
 set -x
 
 xfwm4 --compositor=off --sm-client-disable &
@@ -26,11 +35,6 @@ xfce4-panel --sm-client-disable &
 #
 # Start MATLAB
 #
-
-# Load the required environment
-module load matlab/r2025b
-
-# Launch MATLAB
 module list
 set -x
 matlab -desktop

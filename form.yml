@@ -8,6 +8,7 @@ form:
   - num_cpus
   - num_gpus
   - node_type
+  - version
   - custom_element
 attributes:
   custom_queue:
@@ -61,6 +62,16 @@ attributes:
     step: 1
     value: 0
   node_type: null
+  version:
+    widget: select
+    label: "MATLAB version"
+    help: |
+       - This defines the version of MATLAB you want to load
+    cacheable: false
+    options:
+      - [ "r2026a", "matlab/r2026a" ]
+      - [ "r2025b", "matlab/r2025b" ]
+      - [ "r2024b", "matlab/r2024b" ]
   custom_element:
       class: "d-none"
       skip_label: true
