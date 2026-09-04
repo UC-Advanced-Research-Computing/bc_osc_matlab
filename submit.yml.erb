@@ -3,13 +3,15 @@
   g = (defined?(num_gpus) && !num_gpus.blank?) ? num_gpus.to_i : 0
   c = (num_cpus.blank? ? 1 : num_cpus.to_i)
 
-  GPU_PARTS = %w[gpu-v100 gpu-a100 gpu-h100].freeze
+  GPU_PARTS = %w[gpu-v100 gpu-a100 gpu-h100 gpu-rtx6000].freeze
 
   # --- Rule 1: partition must match GPU request ---
   if g > 0 && !GPU_PARTS.include?(q)
     raise "You requested #{g} GPU(s) but selected '#{q}', which is not a GPU partition. Choose one of: #{GPU_PARTS.join(', ')}."
   end
-
+  if g < 1 && GPU_PARTS.include?(q)
+     raise "You requested #{g} GPU(s) but selected '#{q}', which is a GPU partition. Enter the number of GPUs."
+  end
   # --- Rule 2: max GPUs per partition ---
   case q
   when "gpu-v100", "gpu-a100"
@@ -20,12 +22,16 @@
     if g > 8
       raise "On the #{q} partition, you can request at most 8 GPUs, but you asked for #{g}."
     end
+  when "gpu-rtx6000"
+    if g > 4
+      raise "On the #{q} partition, you can request at most 8 GPUs, but you asked for #{g}."
+    end
   end
 
   # --- Rule 3: max CPUs per GPU ---
   if g > 0
     case q
-    when "gpu-v100", "gpu-a100"
+    when "gpu-v100", "gpu-a100", "gpu-rtx6000"
       max_cpus = 32 * g
       if c > max_cpus
         raise "On the #{q} partition, you can request up to 32 cores per GPU. With #{g} GPU(s), the maximum is #{max_cpus}, but you asked for #{c}."

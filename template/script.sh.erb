@@ -1,14 +1,18 @@
 #!/usr/bin/env bash
 
 <%-
+  form_cuda = ""
   form_modules = context.version
+  GPU_PARTS = %w[gpu-v100 gpu-a100 gpu-h100 gpu-rtx6000].freeze
+  if GPU_PARTS.include?(context.custom_queue)
+    form_cuda = context.cuda_version
+  end
 %>
 
 # Load the required environment
 setup_env () {
   module purge
-  module load <%= form_modules %>
-  module load cuda/12.6.3
+  module load <%= form_modules %> <%= form_cuda %>
 }
 
 setup_env
